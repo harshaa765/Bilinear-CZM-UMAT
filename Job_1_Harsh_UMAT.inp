@@ -1,0 +1,116 @@
+** *Heading
+**
+*Node
+ 1,      0.,      0.,      0.
+ 2,      1.,      0.,      0.
+ 3,      1.,      1.,      0.
+ 4,      0.,      1.,      0.
+ 5,      0.,      0.,      0.
+ 6,      1.,      0.,      0.
+ 7,      1.,      1.,      0.
+ 8,      0.,      1.,      0.
+ 9,     0.5,     0.5,     0.1
+*Element, type=COH3D8
+1, 1, 2, 3, 4, 5, 6, 7, 8
+**
+** Definition of Node and Element Sets
+** -----------------------------------
+*Elset, elset=Single_Elem
+ 1,
+*Nset, nset=Upper, generate
+ 5,  8,  1
+*Nset, nset=Lower, generate
+ 1,  4,  1
+*Nset, nset=control
+ 9,
+**
+** Section: Section-1
+** ------------------
+*Cohesive Section, elset=Single_Elem, material=Interface, response=TRACTION SEPARATION
+1., 
+** 
+** MATERIALS
+** --------- 
+** MATERIALS
+** ---------
+*Material, name=Interface
+*Depvar
+1
+*USER MATERIAL, TYPE=MECHANICAL, CONSTANTS=8, UNSYMM
+2000.,200.,200.,200., 100.,100.,100., 1.
+**
+** CONSTRAINT (EQUATION)
+** ----------
+*Equation
+2
+Upper, 1, 1.,control, 1, -1.
+2
+Upper, 2, 1.,control, 2, -1.
+2
+Upper, 3, 1.,control, 3, -1.
+**
+** STEP: Step-1
+** ------------
+*Step, name=Step-1, nlgeom=YES, inc=1000
+*Static
+0.05, 0.5, 5e-06, 0.05
+**
+** BOUNDARY CONDITIONS
+** 
+*Boundary
+Lower, 1, 1
+Lower, 2, 2
+Lower, 3, 3
+** 
+control, 1, 1
+control, 2, 2
+control, 3, 3, 0.2
+**
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=1
+** 
+** FIELD OUTPUT: F-Output-1
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+*Output, history, variable=PRESELECT
+*Node Output, nset=control
+RF3, CF3, U3
+*Element Output, elset=Single_Elem
+S, E
+*End Step
+** 
+** STEP: Step-2
+** ------------
+*Step, name=Step-2, nlgeom=YES, extrapolation=no, inc=1000
+*Static
+0.05, 0.5, 1e-05, 0.05
+** 
+** BOUNDARY CONDITIONS
+** 
+*Boundary, op=NEW
+Lower, 1, 1
+Lower, 2, 2
+Lower, 3, 3
+** 
+control, 1, 1
+control, 2, 2
+** control, 3, 3, 0.2
+**
+** OUTPUT REQUESTS
+** 
+*Restart, write, frequency=0
+** 
+** FIELD OUTPUT: F-Output-1
+*Output, field, variable=PRESELECT
+** 
+** HISTORY OUTPUT: H-Output-1
+*Output, history, variable=PRESELECT
+*Node Output, nset=control
+RF3, CF3, U3
+*Element Output, elset=Single_Elem
+S, E, SDEG
+**
+*End Step
+**
